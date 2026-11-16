@@ -1,0 +1,72 @@
+name: Sincronizar com o original e gerar o plugin
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "plugin-build/**"
+      - ".github/workflows/sincronizar-e-gerar.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sincronizar-e-gerar
+  cancel-in-progress: false
+
+jobs:
+  sincronizar-e-gerar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trazer a main do original
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # Falha com conflito, ou se o original mexer em .github/workflows (o token da Action não
+        # tem permissão de workflow): nesses casos, sincronizar pelo botão "Sync fork".
+        run: gh api -X POST "repos/${{ github.repository }}/merge-upstream" -f branch=main --jq '.message'
+
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Gerar o plugin
+        run: python3 plugin-build/build.py "$RUNNER_TEMP/plugin"
+
+      - name: Abrir PR na branch plugin, se a saída mudou
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          SHA=$(git rev-parse --short=7 HEAD)
+          BRANCH="plugin-atualizacao-$SHA"
+          git fetch -q origin plugin
+          git worktree add -q "$RUNNER_TEMP/branch-plugin" origin/plugin
+          cd "$RUNNER_TEMP/branch-plugin"
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -R "$RUNNER_TEMP/plugin/." .
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Plugin sem mudança."
+            exit 0
+          fi
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            echo "A branch $BRANCH já existe."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -q -m "chore(plugin): gerar o plugin a partir da main $SHA"
+          git push -q origin "HEAD:refs/heads/$BRANCH"
+          for n in $(gh pr list --base plugin --state open --json number,headRefName \
+                       -q '.[] | select(.headRefName | startswith("plugin-atualizacao-")) | .number'); do
+            gh pr close "$n" --delete-branch --comment "Substituído pela geração a partir de $SHA."
+          done
+          VERSAO=$(python3 -c 'import json; print(json.load(open(".claude-plugin/plugin.json"))["version"])')
+          gh pr create --base plugin --head "$BRANCH" \
+            --title "chore(plugin): dotagents $VERSAO" \
+            --body "Plugin gerado a partir da main $SHA (versão $VERSAO). Revise o diff e faça o merge para publicar no marketplace."
