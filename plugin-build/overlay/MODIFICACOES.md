@@ -20,8 +20,9 @@ copia os arquivos e aplica as mudanças abaixo na saída:
   (`dotagents:<skill>`).
 - **`commands/dot-agent-bootstrap.md`** — a verificação de integridade ganha a condição do modo plugin.
 - **Hooks** — registrados pelo `hooks/hooks.json` do plugin, através de `hooks/dotagents-guard.sh`, que só
-  os ativa em projeto preparado com `/dotagents:setup` e não duplica os de uma instalação feita pelo
-  `install.sh`. No lugar do import `@.claude/commands/manager.md` do `CLAUDE.md`, o hook
+  os ativa onde a squad foi preparada com `/dotagents:setup` — num repositório ou numa pasta acima de
+  vários, valendo para tudo abaixo dela — e não duplica os de uma instalação feita pelo `install.sh`.
+  A raiz encontrada é passada ao gate e ao remind, e os caminhos de `docs/todo/` saem absolutos. No lugar do import `@.claude/commands/manager.md` do `CLAUDE.md`, o hook
   `SessionStart` manda ler o protocolo do Manager pelo caminho do plugin — o arquivo inteiro passa do
   limite de saída de um hook. O lembrete do `remind` aponta para o mesmo caminho.
 - **Arquivos novos** — `commands/setup.md` (`/dotagents:setup`), `scripts/setup-projeto.sh`,

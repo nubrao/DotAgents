@@ -24,9 +24,11 @@ aparece na Action, antes de chegar ao plugin.
 
 ## Hooks
 
-`dotagents-guard.sh` só encaminha para o gate e o remind do original em projeto ativado por
-`/dotagents:setup` (bloco `dotagents:begin` no `CLAUDE.md`). Em projeto sem a squad não faz nada, e
-em projeto instalado pelo `install.sh` também não, para não duplicar os hooks dele. No início da
+`/dotagents:setup` pergunta onde ativar a squad: no repositório ou numa pasta acima de vários
+repositórios. `dotagents-guard.sh` procura o bloco `dotagents:begin` no `CLAUDE.md` do projeto e, se não
+achar, nas pastas acima dele; a ativação mais próxima vence e a pasta dela é a raiz da squad, passada
+ao gate e ao remind do original. Sem ativação, não faz nada; em projeto instalado pelo `install.sh`
+também não, para não duplicar os hooks dele. No início da
 sessão, manda ler o protocolo do Manager pelo caminho do plugin — o arquivo inteiro passa do limite de
 saída de um hook.
 
