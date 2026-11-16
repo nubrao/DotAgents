@@ -1,6 +1,6 @@
 {
   "name": "dotagents",
-  "version": "2.2.0-build.202611161230.gf923303",
+  "version": "2.2.0-build.202611161458.g4b040c9",
   "description": "Squad multi-agente DotAgents (PO, Architect, Tech Lead, Developer, QA, Security, Ops) como plugin do Claude Code. Ative por projeto com /dotagents:setup.",
   "author": {
     "name": "Rodrigo Celebrone; adaptação para plugin: Bruno Camara"
