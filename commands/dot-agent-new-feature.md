@@ -1,0 +1,11 @@
+---
+description: Iniciar uma nova feature — pré-classifica como 🆕 Feature e entra no pipeline do Manager pelo Product Owner
+---
+
+Leia `${CLAUDE_PLUGIN_ROOT}/commands/manager.md` — ele é o protocolo absoluto desta execução.
+
+Pré-classificação: **🆕 Feature** (anuncie conforme manager § 🎯) e entre no pipeline pelo **Product Owner** (`${CLAUDE_PLUGIN_ROOT}/agents/product-owner.md`).
+
+O PO cria a task canônica (`docs/todo/<NNN-slug>/task.md`, template `memories/templates/task.md`) e executa o Gate de Completude — **as 5 respostas DEVEM ser escritas no task.md mesmo em fast-track SDD** (manager § 🚧). Só então a spec avança: Architect → Tech Lead → Developer (grupos independentes em paralelo, usando `state-checkpoint` para proteger o ambiente) → **QA ∥ (Security) ∥ Review do Tech Lead** (fan-out + join do TL, manager § 🔀) → Ops → validação final do PO.
+
+Siga o fluxo obrigatório definido em `${CLAUDE_PLUGIN_ROOT}/commands/manager.md`. Não pule etapas.

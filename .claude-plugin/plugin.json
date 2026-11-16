@@ -1,0 +1,10 @@
+{
+  "name": "dotagents",
+  "version": "2.2.0-build.202611161132.g1eabf0c",
+  "description": "Squad multi-agente DotAgents (PO, Architect, Tech Lead, Developer, QA, Security, Ops) como plugin do Claude Code. Ative por projeto com /dotagents:setup.",
+  "author": {
+    "name": "Rodrigo Celebrone; adaptação para plugin: Bruno Camara"
+  },
+  "homepage": "https://github.com/nubrao/DotAgents",
+  "license": "Licença DotAgents (ver license.md)"
+}
